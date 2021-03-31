@@ -78,7 +78,7 @@ proxies:
     uuid: 72274198-b0b9-41b5-886b-6921cb0bee9b
     alterId: "0"
     cipher: chacha20-poly1305
-  - name: paizuri-01
+  - name: paizuri-1001
     type: vmess
     server: 1.0.0.1
     port: 443
@@ -92,7 +92,7 @@ proxies:
     ws-path: /3Gv07Q1
     ws-headers:
       Host: www.paizurigasuki.fun
-  - name: paizuri-nginx
+  - name: paizuri-ws
     type: vmess
     server: www.paizurigasuki.fun
     port: 443
@@ -127,7 +127,7 @@ proxy-groups:
       - S3
       - S4
       - S5
-      - paizuri
+      - paizuri-ws
     type: load-balance
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
