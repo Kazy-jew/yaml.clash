@@ -1,0 +1,153 @@
+port: 7890
+socks-port: 7891
+redir-port: 7892
+allow-lan: false
+mode: Global
+log-level: info
+external-controller: 127.0.0.1:9090
+secret: ""
+cfw-bypass:
+  - localhost
+  - 127.*
+  - 10.*
+  - 172.16.*
+  - 172.17.*
+  - 172.18.*
+  - 172.19.*
+  - 172.20.*
+  - 172.21.*
+  - 172.22.*
+  - 172.23.*
+  - 172.24.*
+  - 172.25.*
+  - 172.26.*
+  - 172.27.*
+  - 172.28.*
+  - 172.29.*
+  - 172.30.*
+  - 172.31.*
+  - 192.168.*
+  - <local>
+cfw-latency-timeout: 3000
+cfw-latency-url: http://www.gstatic.com/generate_204
+cfw-conn-break-strategy:
+  proxy: none
+  profile: true
+  mode: false
+cfw-child-process: []
+cfw-proxies-order: default
+
+proxies:
+  - name: s1
+    type: ss
+    server: c29s1.jamjams.net
+    port: "21099"
+    cipher: aes-256-gcm
+    password: "3vPPxzJsB6"
+  - name: s2
+    type: ss
+    server: c29s2.jamjams.net
+    port: "21099"
+    cipher: aes-256-gcm
+    password: "3vPPxzJsB6"
+  - name: S3
+    type: vmess
+    server: c29s3.jamjams.net
+    port: "21099"
+    uuid: 72274198-b0b9-41b5-886b-6921cb0bee9b
+    alterId: "0"
+    cipher: chacha20-poly1305
+  - name: paizuri
+    type: vmess
+    server: 173.242.115.203
+    port: "9986"
+    uuid: 3a173e61-a68c-4df4-b163-98da82c30994
+    alterId: "32"
+    cipher: chacha20-poly1305
+  - name: S4
+    type: vmess
+    server: c29s4.jamjams.net
+    port: "21099"
+    uuid: 72274198-b0b9-41b5-886b-6921cb0bee9b
+    alterId: "0"
+    cipher: chacha20-poly1305
+  - name: S5
+    type: vmess
+    server: c29s5.jamjams.net
+    port: "21099"
+    uuid: 72274198-b0b9-41b5-886b-6921cb0bee9b
+    alterId: "0"
+    cipher: chacha20-poly1305
+  - name: paizuri-01
+    type: vmess
+    server: 1.0.0.1
+    port: 443
+    uuid: fc876589-99b6-4476-8ae7-84f5512f1ebb
+    alterId: 0
+    cipher: auto
+    tls: true
+    #tls-hostname: s4.bilabilax.tk
+    skip-cert-verify: true
+    network: ws
+    ws-path: /3Gv07Q1
+    ws-headers:
+      Host: www.paizurigasuki.fun
+  - name: paizuri-nginx
+    type: vmess
+    server: www.paizurigasuki.fun
+    port: 443
+    uuid: fc876589-99b6-4476-8ae7-84f5512f1ebb
+    alterId: 0
+    cipher: auto
+    tls: true
+    #tls-hostname: s4.bilabilax.tk
+    skip-cert-verify: true
+    network: ws
+    ws-path: /3Gv07Q1
+    ws-headers:
+      Host: www.paizurigasuki.fun
+proxy-groups:
+ # - name: "balance-auto"
+  #  proxies:
+ #     - s2
+ #     - S3
+  #    - S4
+  #    - paizuri
+   # tolerance: 150
+   # lazy: true
+  #  type: url-test
+  #  url: 'http://www.gstatic.com/generate_204'
+ #   interval: 300
+  #  type: url-test
+
+  - name: "balance-auto"
+    proxies:
+      - s1
+      - s2
+      - S3
+      - S4
+      - S5
+      - paizuri
+    type: load-balance
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    _index: 0
+#proxy-groups:
+# - name: Proxy-CFW
+#    proxies:
+#      - S4
+#    type: select
+#    _index: 0
+rules:
+  - DOMAIN-SUFFIX,google.com,balance-auto
+  - DOMAIN-KEYWORD,google,balance-auto
+  - DOMAIN,google.com,balance-auto
+  - DOMAIN-SUFFIX,ad.com,REJECT
+  - SRC-IP-CIDR,192.168.1.201/32,DIRECT
+  # optional param "no-resolve" for IP rules (GEOIP, IP-CIDR, IP-CIDR6)
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - GEOIP,CN,DIRECT
+  - DST-PORT,80,DIRECT
+  - SRC-PORT,7777,DIRECT
+#  - RULE-SET,apple,REJECT # Premium only
+  - MATCH,balance-auto
