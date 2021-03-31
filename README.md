@@ -1,0 +1,2 @@
+# yaml.clash
+clash configure
